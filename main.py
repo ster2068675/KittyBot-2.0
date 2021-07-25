@@ -2,12 +2,19 @@ import discord
 from discord.ext import commands
 import os
 import aiohttp
+from replit import db
+
+init_triggers = ["treat", "eat", "snack", "toy", "scratch", "scritch", "fish", "fishing", "food", "itchy", "cat", "meat"]
+
+if "ready" not in db.keys():
+  db["ready"] = True
 
 bot = commands.Bot(command_prefix="!", case_insensitive=True)
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+
 
 @bot.command(name='hello', description="Greet the user!")
 async def hello(ctx):
@@ -25,6 +32,15 @@ async def kitty(ctx):
   embed.set_image(url=img_json['link'])
   embed.set_footer(text = fact_json['fact'])
   await ctx.send(embed=embed)
+
+@bot.event
+async def on_message(message):
+  if message.author == bot.user:
+      return
+  msg = message.content
+  if any(word in msg for word in init_triggers):
+    await message.channel.send('Meooow!')
+  await bot.process_commands(message)
 
 bot.run(os.environ['TOKEN'])
 
