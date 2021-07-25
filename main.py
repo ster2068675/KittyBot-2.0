@@ -13,11 +13,14 @@ async def on_ready():
 async def hello(ctx):
   await ctx.send(f"Hello {ctx.author.name}!")
 
-@bot.command()
-async def cat(ctx):
+@bot.command(name='kitty', description="sends a pic of a kitty to the chat")
+async def kitty(ctx):
   async with aiohttp.ClientSession() as session:
-    req = await session.get('cat_api')
+    req = await session.get(os.environ['cat_api'])
     json = await req.json()
+  embed = discord.Embed(title="Kitty~", color=discord.Color.from_rgb(241, 22, 101))
+  embed.set_image(url=json['link'])
+  await ctx.send(embed=embed)
 
 bot.run(os.environ['TOKEN'])
 
