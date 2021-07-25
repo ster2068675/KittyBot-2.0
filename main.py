@@ -16,10 +16,14 @@ async def hello(ctx):
 @bot.command(name='kitty', description="sends a pic of a kitty to the chat")
 async def kitty(ctx):
   async with aiohttp.ClientSession() as session:
-    req = await session.get(os.environ['cat_api'])
-    json = await req.json()
+    img_req = await session.get(os.environ['cat_api'])
+    img_json = await img_req.json()
+    fact_req = await session.get(os.environ['fact_api'])
+    fact_json = await fact_req.json()
+
   embed = discord.Embed(title="Kitty~", color=discord.Color.from_rgb(241, 22, 101))
-  embed.set_image(url=json['link'])
+  embed.set_image(url=img_json['link'])
+  embed.set_footer(text = fact_json['fact'])
   await ctx.send(embed=embed)
 
 bot.run(os.environ['TOKEN'])
